@@ -1,0 +1,141 @@
+maccess  maccess.c  maccess.o  Makefile  prlimit.c  README.md  test_files  test.sh
+dan@beast:~/Desktop/pds-fs/access$ make maccess 
+gcc -Wall -Wextra -ansi -pedantic -D_XOPEN_SOURCE=500 -g -c maccess.c
+gcc  -o maccess maccess.o
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv test_files/tt
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ls test_files/
+ls: cannot open directory 'test_files/': Permission denied
+dan@beast:~/Desktop/pds-fs/access$ chmod +xr test_files/
+dan@beast:~/Desktop/pds-fs/access$ ls test_files/
+fl
+dan@beast:~/Desktop/pds-fs/access$ chmod -x test_files/
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vr test_files/fl 
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vx test_files/fl 
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ chmod -r test_files/
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vx test_files/fl 
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vr test_files/fl 
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vw test_files/fl 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vx maccess
+maccess: Permission granted 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vx ./maccess
+maccess: Permission granted 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vx ../access
+maccess: Permission granted 
+dan@beast:~/Desktop/pds-fs/access$ ls
+maccess  maccess.c  maccess.o  Makefile  prlimit.c  README.md  test_files  test.sh
+dan@beast:~/Desktop/pds-fs/access$ ln -s link1 link2
+dan@beast:~/Desktop/pds-fs/access$ rm link1
+rm: cannot remove 'link1': No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ls
+link2    maccess.c  Makefile   README.md   test.sh
+maccess  maccess.o  prlimit.c  test_files
+dan@beast:~/Desktop/pds-fs/access$ rm link2
+dan@beast:~/Desktop/pds-fs/access$ cd test_files/
+bash: cd: test_files/: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ln -s link2
+dan@beast:~/Desktop/pds-fs/access$ ls
+link2    maccess.c  Makefile   README.md   test.sh
+maccess  maccess.o  prlimit.c  test_files
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -r link2 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv link2 
+maccess: Too many levels of symbolic links
+dan@beast:~/Desktop/pds-fs/access$ rm link2 
+dan@beast:~/Desktop/pds-fs/access$ ln -s link1 link2
+dan@beast:~/Desktop/pds-fs/access$ ln -s link2 link1 
+dan@beast:~/Desktop/pds-fs/access$ rm link1
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv link2 
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ls
+link2    maccess.c  Makefile   README.md   test.sh
+maccess  maccess.o  prlimit.c  test_files
+dan@beast:~/Desktop/pds-fs/access$ rm link2 
+dan@beast:~/Desktop/pds-fs/access$ rm de link2 
+rm: cannot remove 'de': No such file or directory
+rm: cannot remove 'link2': No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ln -s de link1
+dan@beast:~/Desktop/pds-fs/access$ ls
+link1    maccess.c  Makefile   README.md   test.sh
+maccess  maccess.o  prlimit.c  test_files
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv link2 
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv link21
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv link1
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv link1
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -v link1
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv link1
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv link1
+maccess: No such file or directory
+dan@beast:~/Desktop/pds-fs/access$ rm link1 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /proc/
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /dev/null
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /dev/f
+fb0       fd/       freefall  full      fuse      
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /dev/fu
+full  fuse  
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /dev/full 
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv /dev/full 
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -xv /dev/full 
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv /dev/null
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -xv /dev/null
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv /proc/self/mem
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv /proc/self/mem
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ls /proc/self/mem 
+/proc/self/mem
+dan@beast:~/Desktop/pds-fs/access$ ls /proc/self 
+attr             cwd       map_files   oom_adj        sessionid  timers
+autogroup        environ   maps        oom_score      setgroups  timerslack_ns
+auxv             exe       mem         oom_score_adj  smaps      uid_map
+cgroup           fd        mountinfo   pagemap        stack      wchan
+clear_refs       fdinfo    mounts      personality    stat
+cmdline          gid_map   mountstats  projid_map     statm
+comm             io        net         root           status
+coredump_filter  limits    ns          sched          syscall
+cpuset           loginuid  numa_maps   schedstat      task
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv /proc/self/mem
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -xv /proc/self/mem
+maccess: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -xv /proc/self/mem
+maccess: /proc/self/mem: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv /proc/self/mem
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /proc/self/mem
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /proc
+maccess: /proc: Permission denied
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -xv /proc
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -rv /proc
+maccess: OK 
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -wv /proc
+maccess: /proc: Permission denied
+
+
+# on change la valeur de vflag = 10 
+# on a l'erreur EINVAL
+dan@beast:~/Desktop/pds-fs/access$ ./maccess -vx /dev/cdrom/ 
+maccess: /dev/cdrom/: Invalid argument
+
+# on passe en argument d'access un pointeur null 
+# on a l'erreur EFAULT
+sasu@a10p3:~/pds/pds-fs/access$ ./maccess -wv macess 
+maccess: macess: Bad address
